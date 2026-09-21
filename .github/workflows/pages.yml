@@ -1,0 +1,50 @@
+# 2026-09-21 19:25 KST
+#
+# 저장소 전체를 GitHub Pages 로 올립니다.
+#
+# 이 저장소의 Pages 설정이 "GitHub Actions"(build_type: workflow) 로 되어 있어
+# 이 워크플로가 필요합니다. 설정을 "Deploy from a branch" 의 main / (root) 로
+# 바꾸면 이 파일은 지워도 됩니다.
+#
+# 빌드 단계는 없습니다. 웹 버전은 외부 라이브러리도 번들러도 쓰지 않으므로
+# 파일을 그대로 올리기만 하면 됩니다. 루트의 index.html 이 web_version/ 으로
+# 보내 주고, 빈 .nojekyll 이 Jekyll 처리를 끕니다.
+
+name: GitHub Pages 배포
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:      # 설정 화면에서 수동으로 다시 돌릴 수 있게
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 배포가 겹치지 않게 합니다. 진행 중인 배포는 취소하지 않습니다.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  배포:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.배포단계.outputs.page_url }}
+    steps:
+      - name: 저장소 내려받기
+        uses: actions/checkout@v4
+
+      - name: Pages 설정 준비
+        uses: actions/configure-pages@v5
+
+      - name: 저장소 전체를 산출물로 올리기
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Pages 에 배포
+        id: 배포단계
+        uses: actions/deploy-pages@v4

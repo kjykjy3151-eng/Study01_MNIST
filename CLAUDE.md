@@ -51,9 +51,15 @@ torch 가 필요해 같은 환경을 빌려 쓴다.
 
 ## 배포
 
-GitHub Pages 를 `main` 브랜치 루트로 게시한다. 워크플로도 빌드도 없다.
-웹 앱 주소는 `.../study01_MNIST/web_version/` 이고, 루트 `index.html` 이
+GitHub Pages 로 저장소 전체를 게시한다. **빌드 단계는 없다.** 웹 버전이 외부
+라이브러리도 번들러도 쓰지 않으므로 파일을 그대로 올리기만 하면 된다.
+웹 앱 주소는 `.../Study01_MNIST/web_version/` 이고, 루트 `index.html` 이
 그리로 보내 준다. 루트의 빈 `.nojekyll` 은 Pages 의 Jekyll 처리를 끈다.
+
+이 저장소의 Pages 설정이 `GitHub Actions`(build_type: workflow) 로 되어 있어
+`.github/workflows/pages.yml` 이 배포를 맡는다. 설정을 `Deploy from a branch` 의
+`main` / `(root)` 로 바꾸면 그 워크플로 파일은 지워도 된다. 설계 문서는
+워크플로 없는 쪽을 전제로 쓰였는데, 실제 저장소 설정이 달라 이렇게 맞췄다.
 
 ## 설계 문서
 
