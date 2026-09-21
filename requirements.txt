@@ -1,0 +1,23 @@
+# 손글씨 숫자 인식 앱에 필요한 패키지 목록
+#
+# 설치:
+#     pip install -r requirements.txt
+#
+# PyTorch를 CPU 전용 인덱스에서 받도록 지정해 두었습니다.
+# 기본 PyPI를 쓰면 Windows에서 CUDA가 포함된 2.5GB짜리 꾸러미를 받게 되는데,
+# 이 앱은 GPU를 쓰지 않으므로 받을 필요가 없습니다. CPU 전용은 약 130MB입니다.
+# (CUDA 꾸러미는 내부 경로가 길어서, 윈도우의 260자 경로 제한에 걸려
+#  설치가 실패하는 경우도 있습니다)
+#
+# GPU로 학습하고 싶다면 이 파일 대신 아래처럼 직접 설치하세요.
+#     pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
+#
+# 지원 파이썬: 3.10 ~ 3.15 (3.9 이하는 PyTorch 휠이 없습니다)
+
+--index-url https://download.pytorch.org/whl/cpu
+--extra-index-url https://pypi.org/simple
+
+torch>=2.0
+torchvision>=0.15
+numpy>=1.24
+pillow>=10.0
