@@ -1,0 +1,42 @@
+<!-- 2026-09-21 18:23 KST -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>손글씨 숫자 인식기</title>
+<link rel="stylesheet" href="css/스타일.css">
+</head>
+<body>
+<main class="전체틀">
+    <h1>손글씨 숫자 인식기</h1>
+    <p class="설명">외부 라이브러리 없이 브라우저에서 바로 추론합니다.</p>
+
+    <div class="본문">
+        <section class="왼쪽">
+            <p class="안내">여기에 숫자를 크게 하나 그리세요</p>
+            <canvas id="그림판" width="280" height="280"></canvas>
+            <div class="단추들">
+                <button id="지우기">지우기 (Esc)</button>
+                <button id="다시인식">다시 인식</button>
+            </div>
+        </section>
+
+        <section class="오른쪽">
+            <div class="결과칸">
+                <div id="결과숫자" class="결과숫자">?</div>
+                <div id="확신도" class="확신도">모델을 불러오는 중입니다.</div>
+            </div>
+
+            <div id="막대들" class="막대들"></div>
+
+            <div class="미리보기칸">
+                <p class="안내">모델이 보는 28×28</p>
+                <canvas id="미리보기" width="28" height="28"></canvas>
+            </div>
+        </section>
+    </div>
+</main>
+<script type="module" src="js/앱.js"></script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+/* 2026-09-21 18:23 KST */
+
+:root {
+    --배경: #f5f5f5;
+    --글자: #1a1a1a;
+    --흐린글자: #666666;
+    --강조: #2563eb;
+    --연한강조: #93c5fd;
+    --성공: #1a7f37;
+    --주의: #b45309;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    padding: 24px 16px;
+    background: var(--배경);
+    color: var(--글자);
+    font-family: system-ui, "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+}
+
+.전체틀 { max-width: 760px; margin: 0 auto; }
+h1 { font-size: 22px; margin: 0 0 4px; }
+.설명 { margin: 0 0 20px; color: var(--흐린글자); font-size: 14px; }
+.안내 { margin: 0 0 8px; font-size: 13px; color: var(--흐린글자); }
+
+.본문 { display: flex; flex-wrap: wrap; gap: 24px; }
+/* 화면이 캔버스보다 좁으면 왼쪽 열이 줄어들어야 합니다. flex 기본값인
+   min-width:auto 가 남아 있으면 줄어들지 못해 가로 스크롤이 생깁니다. */
+.왼쪽 { flex: 0 1 auto; min-width: 0; }
+.오른쪽 { flex: 1 1 260px; min-width: 240px; }
+
+#그림판 {
+    display: block;
+    width: 280px;
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    background: #000000;
+    border: 1px solid #888888;
+    border-radius: 4px;
+    cursor: crosshair;
+    touch-action: none;   /* 손가락으로 그릴 때 화면이 함께 움직이지 않도록 */
+}
+
+.단추들 { display: flex; gap: 8px; margin-top: 10px; }
+button {
+    flex: 1;
+    padding: 9px 12px;
+    font: inherit;
+    font-size: 14px;
+    background: #ffffff;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+button:hover:enabled { background: #eeeeee; }
+button:disabled { opacity: 0.5; cursor: default; }
+
+.결과칸 { text-align: center; margin-bottom: 16px; }
+.결과숫자 { font-size: 72px; line-height: 1; font-weight: 700; }
+.결과숫자.확신 { color: var(--성공); }
+.결과숫자.애매 { color: var(--주의); }
+.확신도 { margin-top: 6px; font-size: 14px; color: var(--흐린글자); }
+.확신도.오류 { color: #b91c1c; }
+
+.막대들 { display: grid; gap: 4px; margin-bottom: 16px; }
+.막대줄 { display: grid; grid-template-columns: 16px 1fr 48px; align-items: center; gap: 8px; }
+.막대줄 .숫자 { font-size: 13px; color: var(--흐린글자); }
+.막대바깥 { height: 12px; background: #e5e5e5; border-radius: 2px; overflow: hidden; }
+.막대안 { height: 100%; width: 0; background: var(--연한강조); transition: width 0.1s; }
+.막대줄.으뜸 .막대안 { background: var(--강조); }
+.막대줄.으뜸 .숫자, .막대줄.으뜸 .값 { color: var(--글자); font-weight: 600; }
+.막대줄 .값 { font-size: 12px; color: var(--흐린글자); text-align: right; font-variant-numeric: tabular-nums; }
+
+.미리보기칸 { text-align: center; }
+#미리보기 {
+    width: 112px;
+    height: 112px;
+    background: #000000;
+    border: 1px solid #cccccc;
+    image-rendering: pixelated;   /* 4배로 키워도 픽셀이 뭉개지지 않게 */
+}
