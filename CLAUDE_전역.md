@@ -2,6 +2,16 @@
 
 # CLAUDE.md (전역)
 
+> **이 파일은 사본입니다.** 원본은 이 저장소가 아니라 작업자 PC의
+> `~/.claude/CLAUDE.md`(윈도우: `%USERPROFILE%\.claude\CLAUDE.md`)에 있습니다.
+>
+> Claude Code 가 자동으로 읽는 파일은 `CLAUDE.md`, `CLAUDE.local.md`,
+> `.claude/CLAUDE.md`, `AGENTS.md` 뿐이므로 **이 파일은 자동으로 적용되지 않습니다.**
+> 전역 설정에 어떤 규칙이 들어 있는지 저장소에서도 확인할 수 있도록 둔 것입니다.
+>
+> 이 프로젝트에만 적용되는 규칙은 [`CLAUDE.md`](CLAUDE.md) 에 있습니다.
+> 전역 설정을 바꾸면 이 사본도 함께 갱신해야 내용이 어긋나지 않습니다.
+
 모든 프로젝트에 적용되는 개인 설정입니다.
 
 ## 파일 작성 규칙
