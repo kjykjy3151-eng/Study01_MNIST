@@ -136,12 +136,12 @@ export function 모델_만들기(구조, 배열버퍼) {
  */
 export async function 모델_불러오기(기준경로 = "가중치/") {
     const 구조_응답 = await fetch(기준경로 + "구조.json");
-    if (!구조_응답.ok) throw new Error(`구조.json 을 불러오지 못했습니다 (${구조_응답.status})`);
+    if (!구조_응답.ok) throw new Error(`구조.json 을 불러오지 못했습니다 (${구조_응답.status}).`);
     const 구조 = await 구조_응답.json();
 
     const 가중치_응답 = await fetch(기준경로 + 구조.가중치_파일);
     if (!가중치_응답.ok) {
-        throw new Error(`${구조.가중치_파일} 을 불러오지 못했습니다 (${가중치_응답.status})`);
+        throw new Error(`${구조.가중치_파일} 을 불러오지 못했습니다 (${가중치_응답.status}).`);
     }
     return 모델_만들기(구조, await 가중치_응답.arrayBuffer());
 }
