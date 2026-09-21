@@ -1,0 +1,25 @@
+# 줄바꿈 문자를 운영체제별로 고정합니다.
+#
+# 이 파일이 없으면 윈도우에서 받을 때 git이 모든 텍스트 파일을 CRLF로 바꿔 주는데,
+# 맥·리눅스용 실행 파일이 CRLF가 되면 셔뱅(#!)이 깨져
+# "bad interpreter: /bin/bash^M" 오류가 나면서 실행되지 않습니다.
+
+# 기본: 저장소에는 LF로 보관하고, 체크아웃할 때는 OS 기본값을 따릅니다.
+* text=auto
+
+# 맥·리눅스 셸 스크립트는 어느 OS에서 받든 반드시 LF 여야 합니다.
+*.command text eol=lf
+*.sh       text eol=lf
+
+# 윈도우 배치 파일은 CRLF 여야 합니다.
+# 이 프로젝트의 .bat 은 한글을 cp949(ANSI)로 담고 있어 git이 손대면 깨지므로,
+# 아예 이진 파일로 취급해 바이트를 그대로 보존합니다.
+*.bat -text
+
+# PowerShell 스크립트는 윈도우 전용이므로 CRLF 로 받습니다.
+*.ps1 text eol=crlf
+
+# 이진 파일 (git이 줄바꿈을 건드리면 안 됩니다)
+*.ico binary
+*.png binary
+*.pt  binary

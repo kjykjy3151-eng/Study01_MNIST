@@ -48,24 +48,32 @@ def 가상환경으로_재실행():
     except ImportError:
         pass
 
-    # 콘솔 창이 뜨지 않는 pythonw.exe를 우선 사용합니다.
+    # 윈도우에서는 콘솔 창이 뜨지 않는 pythonw.exe를 우선 사용합니다.
+    # 맥·리눅스에는 pythonw가 없으므로 .venv/bin/python 을 씁니다.
     후보들 = [
         기준_폴더 / ".venv" / "Scripts" / "pythonw.exe",  # 윈도우
         기준_폴더 / ".venv" / "Scripts" / "python.exe",
         기준_폴더 / ".venv" / "bin" / "python",            # macOS / 리눅스
+        기준_폴더 / ".venv" / "bin" / "python3",
     ]
     실행기 = next((경로 for 경로 in 후보들 if 경로.exists()), None)
 
     if 실행기 is None:
+        # 운영체제에 맞는 설치 명령을 안내합니다.
+        if sys.platform == "win32":
+            설치_안내 = ("  python -m venv .venv\n"
+                        "  .venv\\Scripts\\python.exe -m pip install -r requirements.txt")
+        else:
+            설치_안내 = ("  python3 -m venv .venv\n"
+                        "  .venv/bin/python -m pip install -r requirements.txt")
+
         임시_루트 = tk.Tk()
         임시_루트.withdraw()
         messagebox.showerror(
             "실행 환경 없음",
             "PyTorch가 설치된 가상환경(.venv)을 찾지 못했습니다.\n\n"
             f"프로젝트 폴더: {기준_폴더}\n\n"
-            "터미널에서 아래 명령으로 환경을 먼저 만들어 주세요.\n"
-            "  python -m venv .venv\n"
-            "  .venv\\Scripts\\pip install -r requirements.txt",
+            "터미널에서 아래 명령으로 환경을 먼저 만들어 주세요.\n" + 설치_안내,
         )
         임시_루트.destroy()
         sys.exit(1)
@@ -90,9 +98,23 @@ from model import 모델_불러오기
 가중치_경로 = 기준_폴더 / "mnist_cnn.pt"
 아이콘_경로 = 기준_폴더 / "아이콘.ico"
 
+아이콘_PNG_경로 = 기준_폴더 / "아이콘.png"   # 맥·리눅스용 (.ico는 윈도우 전용)
+
 # 윈도우 작업 표시줄이 이 앱을 구분하는 식별자입니다.
 # 바로 가기(.lnk)에 넣는 값과 반드시 같아야 하며, 영문·숫자·점만 씁니다.
 앱_아이디 = "MNIST.HandwrittenDigitRecognizer.1"
+
+# 운영체제마다 들어 있는 글꼴이 다릅니다. 없는 글꼴을 지정하면 Tk가 제멋대로
+# 대체하면서 글자가 깨지거나 창 크기가 틀어지므로, OS별로 골라 씁니다.
+if sys.platform == "darwin":          # macOS
+    본문_글꼴 = "AppleGothic"          # 한글이 들어 있는 기본 글꼴
+    고정폭_글꼴 = "Menlo"
+elif sys.platform == "win32":         # 윈도우
+    본문_글꼴 = "맑은 고딕"
+    고정폭_글꼴 = "Consolas"
+else:                                 # 리눅스 등
+    본문_글꼴 = "TkDefaultFont"
+    고정폭_글꼴 = "TkFixedFont"
 
 캔버스_크기 = 280   # 화면에 보이는 그림판 한 변의 픽셀 수 (28의 10배)
 붓_굵기 = 22        # 선 굵기. 28x28로 줄였을 때 MNIST와 비슷한 두께가 되도록 잡은 값
@@ -183,12 +205,7 @@ class 손글씨인식앱:
         루트.title("손글씨 숫자 인식기")
         루트.resizable(False, False)
 
-        # 창 왼쪽 위와 작업 표시줄에 표시될 아이콘
-        if 아이콘_경로.exists():
-            try:
-                루트.iconbitmap(default=str(아이콘_경로))
-            except tk.TclError:
-                pass  # 아이콘을 못 읽어도 앱은 그대로 실행합니다.
+        self.창_아이콘_설정(루트)
 
         전체틀 = tk.Frame(루트, padx=16, pady=16, bg="#f5f5f5")
         전체틀.pack()
@@ -198,7 +215,7 @@ class 손글씨인식앱:
         왼쪽틀.grid(row=0, column=0, padx=(0, 16), sticky="n")
 
         tk.Label(왼쪽틀, text="여기에 숫자를 크게 하나 그리세요",
-                 font=("맑은 고딕", 11), bg="#f5f5f5").pack(pady=(0, 8))
+                 font=(본문_글꼴, 11), bg="#f5f5f5").pack(pady=(0, 8))
 
         self.캔버스 = tk.Canvas(왼쪽틀, width=캔버스_크기, height=캔버스_크기,
                                 bg="black", cursor="crosshair", highlightthickness=1,
@@ -207,25 +224,25 @@ class 손글씨인식앱:
 
         버튼틀 = tk.Frame(왼쪽틀, bg="#f5f5f5")
         버튼틀.pack(pady=(10, 0))
-        tk.Button(버튼틀, text="지우기 (Esc)", width=14, font=("맑은 고딕", 10),
+        tk.Button(버튼틀, text="지우기 (Esc)", width=14, font=(본문_글꼴, 10),
                   command=self.캔버스_비우기).pack(side=tk.LEFT, padx=4)
-        tk.Button(버튼틀, text="다시 인식", width=14, font=("맑은 고딕", 10),
+        tk.Button(버튼틀, text="다시 인식", width=14, font=(본문_글꼴, 10),
                   command=self.인식하기).pack(side=tk.LEFT, padx=4)
 
         # --- 오른쪽: 인식 결과 ---
         오른쪽틀 = tk.Frame(전체틀, bg="#f5f5f5")
         오른쪽틀.grid(row=0, column=1, sticky="n")
 
-        tk.Label(오른쪽틀, text="인식 결과", font=("맑은 고딕", 11),
+        tk.Label(오른쪽틀, text="인식 결과", font=(본문_글꼴, 11),
                  bg="#f5f5f5").pack(pady=(0, 4))
-        self.결과_라벨 = tk.Label(오른쪽틀, text="?", font=("맑은 고딕", 64, "bold"),
+        self.결과_라벨 = tk.Label(오른쪽틀, text="?", font=(본문_글꼴, 64, "bold"),
                                   fg="#1a1a1a", bg="#f5f5f5", width=2)
         self.결과_라벨.pack()
         self.확신도_라벨 = tk.Label(오른쪽틀, text="숫자를 그려 주세요",
-                                    font=("맑은 고딕", 11), fg="#555555", bg="#f5f5f5")
+                                    font=(본문_글꼴, 11), fg="#555555", bg="#f5f5f5")
         self.확신도_라벨.pack(pady=(0, 10))
 
-        tk.Label(오른쪽틀, text="숫자별 확률", font=("맑은 고딕", 10),
+        tk.Label(오른쪽틀, text="숫자별 확률", font=(본문_글꼴, 10),
                  bg="#f5f5f5").pack(anchor="w")
 
         # 0~9 각각의 확률을 가로 막대로 보여 줍니다.
@@ -234,20 +251,20 @@ class 손글씨인식앱:
         for 숫자 in range(10):
             줄 = tk.Frame(오른쪽틀, bg="#f5f5f5")
             줄.pack(anchor="w", pady=1)
-            tk.Label(줄, text=str(숫자), font=("Consolas", 10), width=2,
+            tk.Label(줄, text=str(숫자), font=(고정폭_글꼴, 10), width=2,
                      bg="#f5f5f5").pack(side=tk.LEFT)
             막대_캔버스 = tk.Canvas(줄, width=140, height=12, bg="#e0e0e0",
                                    highlightthickness=0)
             막대_캔버스.pack(side=tk.LEFT, padx=4)
             막대 = 막대_캔버스.create_rectangle(0, 0, 0, 12, fill="#3b82f6", width=0)
-            확률_라벨 = tk.Label(줄, text="0.0%", font=("Consolas", 9), width=6,
+            확률_라벨 = tk.Label(줄, text="0.0%", font=(고정폭_글꼴, 9), width=6,
                                  anchor="w", bg="#f5f5f5", fg="#555555")
             확률_라벨.pack(side=tk.LEFT)
             self.막대들.append((막대_캔버스, 막대))
             self.확률_라벨들.append(확률_라벨)
 
         # 실제로 모델에 들어가는 28x28 이미지를 확대해서 보여 주는 미리보기
-        tk.Label(오른쪽틀, text="모델이 보는 28x28 이미지", font=("맑은 고딕", 10),
+        tk.Label(오른쪽틀, text="모델이 보는 28x28 이미지", font=(본문_글꼴, 10),
                  bg="#f5f5f5").pack(anchor="w", pady=(10, 2))
         self.미리보기_캔버스 = tk.Canvas(오른쪽틀, width=112, height=112, bg="black",
                                         highlightthickness=1, highlightbackground="#888888")
@@ -263,6 +280,28 @@ class 손글씨인식앱:
         self.캔버스.bind("<B1-Motion>", self.그리는_중)
         self.캔버스.bind("<ButtonRelease-1>", self.그리기_끝)
         루트.bind("<Escape>", lambda 이벤트: self.캔버스_비우기())
+
+    def 창_아이콘_설정(self, 루트):
+        """창과 작업 표시줄(맥에서는 Dock)에 아이콘을 지정합니다.
+
+        .ico 형식은 윈도우 전용이라 맥·리눅스의 Tk에서는 읽지 못하고
+        TclError가 납니다. 그래서 그 환경에서는 PNG를 PhotoImage로 읽어
+        iconphoto()로 지정합니다. 둘 다 실패해도 앱은 그대로 실행됩니다.
+        """
+        if sys.platform == "win32" and 아이콘_경로.exists():
+            try:
+                루트.iconbitmap(default=str(아이콘_경로))
+                return
+            except tk.TclError:
+                pass
+
+        if 아이콘_PNG_경로.exists():
+            try:
+                # PhotoImage는 참조가 사라지면 아이콘이 지워지므로 객체에 보관합니다.
+                self._창_아이콘 = tk.PhotoImage(file=str(아이콘_PNG_경로))
+                루트.iconphoto(True, self._창_아이콘)
+            except tk.TclError:
+                pass  # 아이콘을 못 읽어도 앱 동작에는 지장이 없습니다.
 
     # ----- 그리기 관련 -----
     def 점_찍기(self, x, y):

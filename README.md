@@ -23,6 +23,8 @@
 저장소를 받은 폴더에서 아래 두 줄을 실행하면 끝납니다. 내려받는 용량은 약 130MB,
 설치는 보통 1~2분 걸립니다.
 
+**Windows**
+
 ```bash
 python -m venv .venv
 ```
@@ -31,7 +33,15 @@ python -m venv .venv
 .venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
-맥이나 리눅스라면 두 번째 줄을 `.venv/bin/python -m pip install -r requirements.txt` 로 바꿔 주세요.
+**macOS / 리눅스**
+
+```bash
+python3 -m venv .venv
+```
+
+```bash
+.venv/bin/python -m pip install -r requirements.txt
+```
 
 `requirements.txt` 는 PyTorch를 **CPU 전용 인덱스**에서 받도록 지정해 두었습니다.
 이 앱은 GPU를 쓰지 않는데, 기본 PyPI를 쓰면 Windows에서 CUDA가 포함된
@@ -40,24 +50,57 @@ python -m venv .venv
 학습된 가중치 `mnist_cnn.pt` 가 저장소에 함께 들어 있으므로,
 **재학습 없이 바로 앱을 실행할 수 있습니다.**
 
+**Windows**
+
 ```bash
 .venv\Scripts\python.exe app.py
 ```
 
-### 이 절차는 실제로 검증했습니다
+**macOS / 리눅스**
 
-빈 폴더에 저장소 파일만 복사한 뒤 위 절차를 그대로 따라 아래를 확인했습니다
-(Windows 11, Python 3.12.10, torch 2.14.0+cpu).
+```bash
+.venv/bin/python app.py
+```
+
+맥에서 처음 받았다면 실행 파일에 권한을 한 번 줘야 파인더에서 더블클릭할 수 있습니다.
+
+```bash
+chmod +x "손글씨 인식 앱 실행.command"
+```
+
+그다음부터는 파인더에서 **`손글씨 인식 앱 실행.command`** 를 더블클릭하면 됩니다.
+처음 한 번은 "확인되지 않은 개발자" 경고가 뜰 수 있는데,
+`제어 키를 누른 채 클릭 → 열기` 로 실행하거나
+`시스템 설정 → 개인정보 보호 및 보안` 에서 `확인 없이 열기` 를 누르면 됩니다.
+
+### 운영체제별 실행 파일
+
+| 파일 | 대상 | 용도 |
+| --- | --- | --- |
+| `손글씨 인식 앱 실행.command` | macOS / 리눅스 | 파인더에서 더블클릭 |
+| `손글씨 인식 앱 실행.bat` | Windows | 탐색기에서 더블클릭 |
+| `바로가기_만들기.ps1` | Windows | 바탕 화면 바로 가기 + 작업 표시줄 고정용 |
+
+앱 자체(`app.py`)는 세 OS에서 모두 동작하도록 만들었습니다. 글꼴은 OS별로 골라 쓰고
+(맥은 AppleGothic·Menlo, 윈도우는 맑은 고딕·Consolas), 창 아이콘은 윈도우에서 `.ico`,
+맥·리눅스에서 `.png` 를 씁니다. `.ico` 는 맥의 Tk가 읽지 못하기 때문입니다.
+
+### 검증 범위
+
+**Windows 11에서는 빈 폴더에 저장소 파일만 복사해 전 과정을 실행했습니다**
+(Python 3.12.10, torch 2.14.0+cpu).
 
 - `pip install -r requirements.txt` → CPU판 PyTorch 설치 성공
-- `mnist_cnn.pt` 불러오기 → 성공
-- 그림 → 전처리 → 추론 경로 → 정상 (테스트 도형 모두 정답)
-- `손글씨 인식 앱 실행.bat` 더블클릭 → 앱 창 정상 표시
+- `mnist_cnn.pt` 불러오기, 그림 → 전처리 → 추론 → 정상
+- `손글씨 인식 앱 실행.bat` 더블클릭 → 앱 창 표시
 - `아이콘_만들기.py`, `바로가기_만들기.ps1` → 정상 동작
 
-다만 **macOS와 리눅스에서는 검증하지 못했습니다.** `.bat` 과 `.ps1` 은 Windows 전용이고,
-그 환경에서는 `python app.py` 로 실행해야 합니다. 또 리눅스에서는
-`sudo apt install python3-tk` 로 tkinter를 따로 설치해야 할 수 있습니다.
+**macOS는 실제 기기에서 확인하지 못했습니다.** 대신 맥에서 타게 될 코드 분기를
+강제로 실행해 글꼴 선택, PNG 아이콘 적용, 위젯 생성, 추론까지 오류 없이 도는 것과,
+`.command` 파일이 LF 줄바꿈·BOM 없음·올바른 셔뱅을 갖췄는지 확인했습니다.
+macOS 고유 동작(파인더 더블클릭, Gatekeeper 경고, Dock 아이콘)은 검증하지 못했습니다.
+
+리눅스에서는 `sudo apt install python3-tk` 로 tkinter를 따로 설치해야 할 수 있습니다.
 
 ## 실행
 
