@@ -28,11 +28,16 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  배포:
+  # job 과 step 의 id 는 영문으로 둡니다. Actions 의 표현식 언어가
+  # [A-Za-z_][A-Za-z0-9_-]* 만 식별자로 받아, 한글을 쓰면
+  # "Unexpected symbol" 로 워크플로 자체가 거부됩니다.
+  # 사람이 읽는 name 과 주석은 한글로 씁니다.
+  deploy:
+    name: Pages 배포
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.배포단계.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: 저장소 내려받기
         uses: actions/checkout@v4
@@ -46,5 +51,5 @@ jobs:
           path: '.'
 
       - name: Pages 에 배포
-        id: 배포단계
+        id: deployment
         uses: actions/deploy-pages@v4
