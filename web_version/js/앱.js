@@ -98,7 +98,10 @@ function 그리기_끝내기() {
 지우기_단추.addEventListener("click", 비우기);
 다시인식_단추.addEventListener("click", 인식하기);
 document.addEventListener("keydown", (이벤트) => {
-    if (이벤트.key === "Escape") 비우기();
+    // 모델을 아직 못 불러왔을 때는 비우지 않습니다. 비우면 화면에 떠 있는
+    // 적재 실패 문구가 "숫자를 그려 주세요." 로 덮여, 앱이 멀쩡해 보이는데
+    // 그려도 아무 일이 없는 상태가 됩니다. 지우기 단추도 같은 이유로 꺼 둡니다.
+    if (이벤트.key === "Escape" && 모델 !== null) 비우기();
 });
 
 /** 그림판과 결과 표시를 처음 상태로 되돌립니다. */
