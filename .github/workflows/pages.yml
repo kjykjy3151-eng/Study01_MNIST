@@ -44,6 +44,11 @@ jobs:
 
       - name: Pages 설정 준비
         uses: actions/configure-pages@v5
+        with:
+          # 저장소에 Pages 사이트가 아직 만들어지지 않았으면 이 워크플로가
+          # 직접 만듭니다. 이것이 없으면 "Get Pages site failed ... Not Found"
+          # 로 멈추고, 저장소 설정 화면에서 사람이 먼저 켜 줘야 합니다.
+          enablement: true
 
       - name: 저장소 전체를 산출물로 올리기
         uses: actions/upload-pages-artifact@v3
