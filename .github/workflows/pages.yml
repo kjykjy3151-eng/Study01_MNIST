@@ -43,12 +43,15 @@ jobs:
         uses: actions/checkout@v4
 
       # 이 워크플로는 Pages 사이트를 스스로 만들지 못합니다. 사이트 생성은
-      # 저장소 관리자 권한이 필요한데 GITHUB_TOKEN 에는 그 권한이 없고,
+      # 저장소 관리 권한이 필요한데 GITHUB_TOKEN 에는 그 권한이 없고,
       # 워크플로의 permissions 로도 요청할 수 없습니다. configure-pages 의
       # enablement: true 를 넣어 봤지만
       # "Create Pages site failed ... Resource not accessible by integration"
-      # 으로 거부됐습니다. 최초 1회는 사람이 Settings -> Pages 에서
-      # Source 를 "GitHub Actions" 로 지정해 줘야 합니다.
+      # 으로 거부됐습니다.
+      #
+      # 최초 1회는 관리 권한이 있는 계정 토큰으로 켭니다. Settings -> Pages 에서
+      # Source 를 "GitHub Actions" 로 지정하거나, gh 로 아래 한 줄을 실행합니다.
+      #     gh api --method POST repos/<소유자>/<저장소>/pages -f build_type=workflow
       - name: Pages 설정 준비
         uses: actions/configure-pages@v5
 
