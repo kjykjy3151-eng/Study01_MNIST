@@ -56,10 +56,16 @@ GitHub Pages 로 저장소 전체를 게시한다. **빌드 단계는 없다.** 
 웹 앱 주소는 `.../Study01_MNIST/web_version/` 이고, 루트 `index.html` 이
 그리로 보내 준다. 루트의 빈 `.nojekyll` 은 Pages 의 Jekyll 처리를 끈다.
 
-이 저장소의 Pages 설정이 `GitHub Actions`(build_type: workflow) 로 되어 있어
 `.github/workflows/pages.yml` 이 배포를 맡는다. 설정을 `Deploy from a branch` 의
 `main` / `(root)` 로 바꾸면 그 워크플로 파일은 지워도 된다. 설계 문서는
 워크플로 없는 쪽을 전제로 쓰였는데, 실제 저장소 설정이 달라 이렇게 맞췄다.
+
+**Pages 사이트는 사람이 최초 1회 켜야 한다.** Settings → Pages 에서 Source 를
+`GitHub Actions` 로 지정하는 단계다. 워크플로가 대신 해 줄 수 없는데,
+사이트 생성이 저장소 관리자 권한을 요구하고 `GITHUB_TOKEN` 에는 그 권한이
+없기 때문이다. `configure-pages` 의 `enablement: true` 도
+`Resource not accessible by integration` 으로 거부된다. 켜지 않은 상태에서
+워크플로를 돌리면 `Get Pages site failed ... Not Found` 로 실패한다.
 
 ## 설계 문서
 
