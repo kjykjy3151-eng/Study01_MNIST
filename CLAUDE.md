@@ -56,10 +56,26 @@ GitHub Pages 로 저장소 전체를 게시한다. **빌드 단계는 없다.** 
 웹 앱 주소는 `.../Study01_MNIST/web_version/` 이고, 루트 `index.html` 이
 그리로 보내 준다. 루트의 빈 `.nojekyll` 은 Pages 의 Jekyll 처리를 끈다.
 
-이 저장소의 Pages 설정이 `GitHub Actions`(build_type: workflow) 로 되어 있어
 `.github/workflows/pages.yml` 이 배포를 맡는다. 설정을 `Deploy from a branch` 의
 `main` / `(root)` 로 바꾸면 그 워크플로 파일은 지워도 된다. 설계 문서는
 워크플로 없는 쪽을 전제로 쓰였는데, 실제 저장소 설정이 달라 이렇게 맞췄다.
+
+**Pages 사이트 생성은 워크플로가 스스로 하지 못한다.** 사이트 생성은 저장소
+관리 권한을 요구하는데 워크플로의 `GITHUB_TOKEN` 에는 그 권한이 없고,
+`permissions:` 로 요청할 수도 없다. `configure-pages` 의 `enablement: true` 도
+`Resource not accessible by integration` 으로 거부된다. 사이트가 없는 상태로
+워크플로를 돌리면 `Get Pages site failed ... Not Found` 로 실패한다.
+
+최초 1회는 **저장소 관리 권한이 있는 계정 토큰**으로 켠다. Settings → Pages 에서
+Source 를 `GitHub Actions` 로 지정해도 되고, `repo` 스코프로 로그인한 `gh` 로
+아래 한 줄을 실행해도 된다. 실제로 이 저장소는 이 명령으로 켰다.
+
+```bash
+gh api --method POST repos/kjykjy3151-eng/Study01_MNIST/pages -f build_type=workflow
+```
+
+한 번 켠 뒤에는 `gh workflow run pages.yml --ref main` 으로 언제든 다시 배포할
+수 있다. 사이트가 이미 있으면 `enablement: true` 가 남아 있어도 실패하지 않는다.
 
 ## 설계 문서
 
