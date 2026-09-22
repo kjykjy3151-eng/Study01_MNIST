@@ -21,6 +21,21 @@ body {
 }
 
 .전체틀 { max-width: 760px; margin: 0 auto; }
+
+/* 학번과 이름. 채점자가 화면에서 바로 확인하는 항목이므로
+   흐리게 처리하지 않고 맨 위에 또렷하게 둡니다. */
+.학생정보 {
+    margin: 0 0 12px;
+    padding: 8px 14px;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--글자);
+    background: #ffffff;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+}
+
 h1 { font-size: 22px; margin: 0 0 4px; }
 .설명 { margin: 0 0 20px; color: var(--흐린글자); font-size: 14px; }
 .안내 { margin: 0 0 8px; font-size: 13px; color: var(--흐린글자); }
